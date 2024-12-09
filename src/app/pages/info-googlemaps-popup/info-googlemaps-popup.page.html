@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ place.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <!-- Add images if available -->
+    <ion-img *ngIf="place.photos && place.photos.length > 0" [src]="getPhotoUrl(place.photos[0].photo_reference)" alt="{{ place.name }}"></ion-img>
+
+    <ion-card-header>
+      <ion-card-title>{{ place.name }}</ion-card-title>
+      <ion-card-subtitle>{{ place.formatted_address }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Rating</ion-label>
+        <ion-note slot="end">{{ place.rating ? place.rating : 'Keine Bewertungen verfügbar' }}</ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>Types</ion-label>
+        <ion-note slot="end">{{ place.types.join(', ') }}</ion-note>
+      </ion-item>
+
+      <!-- Conditionally show the "Visit Website" button -->
+      <ion-item *ngIf="place.website">
+        <ion-label>More Info</ion-label>
+        <ion-button fill="outline" slot="end" [href]="place.website" target="_blank">Visit Website</ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

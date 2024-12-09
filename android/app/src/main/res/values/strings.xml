@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">circles</string>
+    <string name="title_activity_main">circles</string>
+    <string name="package_name">ionic.circles</string>
+    <string name="custom_url_scheme">ionic.circles</string>
+</resources>
