@@ -19,4 +19,18 @@ ion-card {
   ion-item {
     margin-top: 10px;
   }
+
+  .yellow-star {
+    color: #FFD700; /* Gold color for the stars */
+    font-size: 20px; /* Adjust size as needed */
+  }
+  .star-container {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Add spacing between stars */
+  }
+
+  .rating-container{
+    font-size: 15;
+  }
   

@@ -19,11 +19,24 @@
     <ion-card-content>
       <ion-item>
         <ion-label>Rating</ion-label>
-        <ion-note slot="end">{{ place.rating ? place.rating : 'Keine Bewertungen verfügbar' }}</ion-note>
-      </ion-item>
-      <ion-item>
-        <ion-label>Types</ion-label>
-        <ion-note slot="end">{{ place.types.join(', ') }}</ion-note>
+        <ion-note slot="end">
+          <ng-container *ngIf="place.rating; else noRating">
+            <!-- Render stars -->
+            <div class="star-container">
+              <div *ngFor="let _ of fullStars">
+                <ion-icon name="star" class="yellow-star"></ion-icon>
+              </div>
+              <div *ngIf="hasHalfStar">
+                <ion-icon name="star-half" class="yellow-star"></ion-icon>
+              </div>
+              <div *ngFor="let _ of emptyStars">
+                <ion-icon name="star-outline" class="yellow-star"></ion-icon>
+              </div>
+              <span class="rating-container">{{ place.rating }}</span>
+            </div>
+          </ng-container>
+          <ng-template #noRating>Keine Bewertungen verfügbar</ng-template>
+        </ion-note>
       </ion-item>
 
       <!-- Conditionally show the "Visit Website" button -->
