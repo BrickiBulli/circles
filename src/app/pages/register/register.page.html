@@ -5,7 +5,16 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form (submit)="register($event)">
+  <form >
+    <ion-item>
+      <ion-label position="stacked">Username</ion-label>
+      <ion-input
+        [(ngModel)]="username"
+        name="username"
+        required
+      ></ion-input>
+    </ion-item>
+
     <ion-item>
       <ion-label position="stacked">Email</ion-label>
       <ion-input
@@ -28,9 +37,9 @@
 
     <ion-button
       expand="block"
-      type="submit"
+      (click)="register()"
     >
       Register
     </ion-button>
-  </form>
+  </form >
 </ion-content>

@@ -1,50 +1,38 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+import {} from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { supabase } from '../services/supabase.service'; 
 import { IonicModule } from '@ionic/angular'; // Import IonicModule
-
+import { SupabaseChatroomsService } from '../services/supabase-chatrooms.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonItem, IonList, IonIcon, IonButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonicModule, ExploreContainerComponent]
+  imports: [CommonModule, IonicModule, ExploreContainerComponent],
 })
 export class Tab2Page {
-
   chatrooms: any[] = [];
 
-  constructor() {}
+  constructor(
+    private chatroomsService: SupabaseChatroomsService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadChatrooms();
   }
 
-  // Function to load chatrooms from Supabase
   async loadChatrooms() {
-    const { data, error } = await supabase
-      .from('chatroom') // Your chatrooms table
-      .select('*');
-
-    if (error) {
-      console.error('Error loading chatrooms:', error);
-    } else {
-      this.chatrooms = data;
+    try {
+      this.chatrooms = await this.chatroomsService.getChatrooms();
+    } catch (error) {
+      console.error('Failed to load chatrooms:', error);
     }
   }
 
-  // Function to create a new chatroom
-  async createChatroom(name: string) {
-    const { data, error } = await supabase
-      .from('chatrooms') // Your chatrooms table
-      .insert([{ name }]);
-
-    if (error) {
-      console.error('Error creating chatroom:', error);
-    } else {
-      this.chatrooms.push(data![0]);
-    }
+  openChatroom(id: string) {
+    this.router.navigate(['/chatroom', id]);
   }
-
 }

@@ -1,18 +1,13 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Chatrooms</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="createChatroom('New Group')">
-        <ion-icon slot="icon-only" name="add"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let chatroom of chatrooms">
-      <ion-label>{{ chatroom.name }}</ion-label>
+    <ion-item *ngFor="let room of chatrooms" (click)="openChatroom(room.id)">
+      <ion-label>{{ room.name }}</ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

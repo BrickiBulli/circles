@@ -1,9 +1,18 @@
 import { Injectable } from '@angular/core';
+import { supabase } from './supabase.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SupabaseChatroomsService {
+  async getChatrooms() {
+    const { data, error } = await supabase.from('chatroom').select('*');
 
-  constructor() { }
+    if (error) {
+      console.error('Error fetching chatrooms:', error);
+      throw error;
+    }
+
+    return data;
+  }
 }
