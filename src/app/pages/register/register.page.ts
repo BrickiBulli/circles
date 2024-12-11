@@ -39,6 +39,7 @@ export class RegisterPage {
   constructor(private authService: AuthService, private router: Router) {}
 
   async register() {
+    console.log("start register")
     if (
       this.email.length <= 5 ||
       this.username.length <= 3 ||
@@ -53,7 +54,7 @@ export class RegisterPage {
       alert('Registration successful!');
       this.email = '';
       this.password = '';
-      await this.router.navigate(['/tabs/tab1']);
+      await this.router.navigate(['/tabs/tab2']);
     } catch (error) {
       console.error('Registration error:', (error as Error)?.message || error);
       alert('Registration failed. Please try again.');

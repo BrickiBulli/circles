@@ -28,4 +28,22 @@ export const routes: Routes = [
       import('./pages/register/register.page').then((m) => m.RegisterPage),
     canActivate: [NoAuthGuard],
   },
+  {
+    path: 'chat/:id',
+    loadComponent: () => import('./pages/chat/chat.page').then((m) => m.ChatPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'create-chatroom',
+    loadComponent: () => import('./pages/create-chatroom/create-chatroom.page').then( m => m.CreateChatroomPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'add-users/:id',
+    loadComponent: () => import('./pages/add-users/add-users.page').then( m => m.AddUsersPage),
+    canActivate: [AuthGuard],
+  },
+
+
+
 ];

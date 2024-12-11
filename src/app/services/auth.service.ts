@@ -44,7 +44,7 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<void> {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { username } },
@@ -52,6 +52,23 @@ export class AuthService {
     if (error) {
       throw error;
     }
+
+    const user = data.user;
+  
+    if (!user) {
+      throw new Error('User was not returned after signUp');
+    }
+
+    console.log('try to create profile data')
+    const { error: profileError } = await supabase
+    .from('profiles')
+    .insert([{ user_id: user.id, user_name: username }]); 
+
+    if (profileError) {
+      console.error('Error creating profile:', profileError);
+      throw profileError;
+    }
+
   }
 
   async login(email: string, password: string): Promise<any> {

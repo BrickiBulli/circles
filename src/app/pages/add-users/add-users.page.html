@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Add Users</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Existing Members List (excluding owner) -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Existing Members</ion-card-title>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let member of existingMembers">
+        <ion-checkbox slot="start" [checked]="selectedMembersToRemove.includes(member.user_id)" 
+                      (ionChange)="toggleMemberRemovalSelection(member.user_id, $event)"></ion-checkbox>
+        <ion-label>{{ member.user_name }}</ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" color="danger" (click)="removeSelectedMembers()" [disabled]="selectedMembersToRemove.length === 0">
+      Remove Selected Members
+    </ion-button>
+  </ion-card>
+
+  <!-- Search Input and Add Users Section -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Search for members</ion-card-title>
+    </ion-card-header>
+    <ion-item>
+      <ion-label position="floating">Search for users</ion-label>
+      <ion-input [(ngModel)]="searchQuery" (ionInput)="searchUsers()"></ion-input>
+    </ion-item>
+
+    <!-- Search Results with Checkboxes -->
+    <ion-list>
+      <ion-item *ngFor="let user of searchResults">
+        <ion-checkbox slot="start" [checked]="selectedUsers.includes(user.user_id)" 
+                      (ionChange)="toggleUserSelection(user.user_id, $event)"></ion-checkbox>
+        <ion-label>{{ user.user_name }}</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Button to Add Selected Users -->
+    <ion-button expand="block" (click)="addSelectedUsersToChat()" [disabled]="selectedUsers.length === 0">
+      Add Selected Users
+    </ion-button>
+  </ion-card>
+  <ion-card>
+    <ion-button expand="block" color="primary" (click)="goToChatroom()">
+      Go to Chatroom
+    </ion-button>
+  </ion-card>
+
+</ion-content>

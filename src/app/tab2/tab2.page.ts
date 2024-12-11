@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {} from '@ionic/angular/standalone';
+import {IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList} from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { IonicModule } from '@ionic/angular'; // Import IonicModule
 import { SupabaseChatroomsService } from '../services/supabase-chatrooms.service';
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ExploreContainerComponent],
+  imports: [CommonModule, ExploreContainerComponent, IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList],
 })
 export class Tab2Page {
   chatrooms: any[] = [];
@@ -31,8 +31,10 @@ export class Tab2Page {
       console.error('Failed to load chatrooms:', error);
     }
   }
-
+  createChatroom(){
+    this.router.navigate(['/create-chatroom']);
+  }
   openChatroom(id: string) {
-    this.router.navigate(['/chatroom', id]);
+    this.router.navigate(['/chat', id]);
   }
 }

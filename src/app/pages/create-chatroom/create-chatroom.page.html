@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Create Chatroom</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="floating">Chatroom Name</ion-label>
+    <ion-input [(ngModel)]="chatroomName"></ion-input>
+  </ion-item>
+  <ion-button expand="block" (click)="createChatroom()">Create Chatroom</ion-button>
+</ion-content>
