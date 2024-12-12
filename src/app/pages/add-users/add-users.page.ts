@@ -1,18 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonLabel, IonItem, IonList, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonButton } from '@ionic/angular/standalone';
+import { ToastController, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonLabel, IonItem, IonList, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonButton, IonCardSubtitle, IonCardContent, IonIcon, IonItemSliding, IonItemOptions, IonItemOption, IonText } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { SupabaseUserService } from 'src/app/services/supabase-profile.service';
 import { SupabaseMembersService } from 'src/app/services/supabase-members.service';
 import { supabase } from 'src/app/services/supabase.service';
 import { Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { addCircleOutline, peopleOutline, personAddOutline, removeCircle, removeCircleOutline, searchOutline, trashOutline, chatbubbleOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-add-users',
   templateUrl: './add-users.page.html',
   styleUrls: ['./add-users.page.scss'],
   standalone: true,
-  imports: [IonButton, IonCheckbox, IonCardTitle, IonCardHeader, IonCard, IonList, IonItem, IonLabel, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonInput]
+  imports: [IonText, IonItemOption, IonItemOptions, IonItemSliding, IonIcon, IonCardContent, IonCardSubtitle, IonButton, IonCheckbox, IonCardTitle, IonCardHeader, IonCard, IonList, IonItem, IonLabel, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonInput]
 })
 export class AddUsersPage {
   chatroomId!: string;
@@ -28,10 +30,15 @@ export class AddUsersPage {
     private route: ActivatedRoute,
     private router: Router,
     private userService: SupabaseUserService,
-    private membersService: SupabaseMembersService
-  ) {}
+    private membersService: SupabaseMembersService,
+    private toastController: ToastController,
+  ) {
+    addIcons({peopleOutline,trashOutline,removeCircleOutline,searchOutline,personAddOutline,addCircleOutline,chatbubbleOutline});
+
+  }
 
   async ngOnInit() {
+
     this.chatroomId = this.route.snapshot.paramMap.get('id')!;
 
     // Get current user
@@ -98,7 +105,7 @@ export class AddUsersPage {
         await this.membersService.addMemberToChat(this.chatroomId, userId);
       }
 
-      alert('Users added successfully!');
+      this.presentToast('Users added successfully!', 'success');
 
       // After adding, reload members and clear search
       await this.loadExistingMembers();
@@ -107,7 +114,7 @@ export class AddUsersPage {
       this.searchQuery = '';
     } catch (error) {
       console.error('Error adding selected users:', error);
-      alert('Failed to add selected users. Please try again.');
+      this.presentToast('Failed to add selected users. Please try again.','danger');
     }
   }
 
@@ -130,18 +137,32 @@ export class AddUsersPage {
         await this.membersService.removeMemberFromChat(this.chatroomId, userId);
       }
 
-      alert('Selected members removed successfully!');
+      this.presentToast('Selected members removed successfully!', 'danger');
 
       // After removal, reload members and clear the removal list
       await this.loadExistingMembers();
       this.selectedMembersToRemove = [];
     } catch (error) {
       console.error('Error removing selected members:', error);
-      alert('Failed to remove selected members. Please try again.');
+      this.presentToast('Failed to remove selected members. Please try again.', 'danger');
     }
   }
 
   goToChatroom() {
     this.router.navigate(['/chat', this.chatroomId]);
+  }
+
+  goToChatrooms() {
+    this.router.navigate(['/tabs/tab2']);
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000, 
+      color,
+      position: 'top',
+    });
+    await toast.present();
   }
 }

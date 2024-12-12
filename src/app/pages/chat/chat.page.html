@@ -1,32 +1,85 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
+    </ion-buttons>
     <ion-title>{{ chatroomName }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <ion-list>
-    <ion-item *ngFor="let message of messages">
-      <ion-label>
-        <!-- Display text if present -->
-        <div *ngIf="message.text">{{ message.text }}</div>
-        <!-- Display proposal details if present -->
-        <div *ngIf="message.proposal">
-          <p>{{ message.proposal.place_address }}</p>
-          <ion-img *ngIf="message.proposal.place_photo_url" [src]="getPhotoUrl(message.proposal.place_photo_url)" alt="{{ message.proposal.place_name }}"></ion-img>
-          <ion-button *ngIf="message.proposal.place_website" fill="outline" [href]="message.proposal.place_website" target="_blank">Visit Website</ion-button>
-        </div>
-        <!-- Display image if present -->
-        <ion-img *ngIf="message.image_url" [src]="message.image_url"></ion-img>
-      </ion-label>
-    </ion-item>
+    <ng-container *ngFor="let message of messages">
+      <ion-card class="message-card">
+        <ion-card-content>
+          <div *ngIf="message.text" class="message-text">
+            <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+            {{ message.text }}
+          </div>
+
+          <ng-container *ngIf="message.proposal">
+            <ion-card-header>
+              <ion-card-title>{{ message.proposal.place_name }}</ion-card-title>
+              <ion-card-subtitle>{{ message.proposal.place_address }}</ion-card-subtitle>
+            </ion-card-header>
+            
+            <div class="proposal-image-container">
+              <ion-img 
+                *ngIf="message.proposal.place_photo_url" 
+                [src]="getPhotoUrl(message.proposal.place_photo_url)" 
+                alt="{{ message.proposal.place_name }}"
+                class="proposal-image">
+              </ion-img>
+            </div>
+            
+            <div class="ion-padding-top">
+              <ion-button 
+                *ngIf="message.proposal.place_website" 
+                expand="block" 
+                fill="outline" 
+                [href]="message.proposal.place_website" 
+                target="_blank"
+                class="website-button">
+                <ion-icon name="open-outline" slot="start"></ion-icon>
+                Visit Website
+              </ion-button>
+            </div>
+          </ng-container>
+
+          <div class="message-image-container">
+            <ion-img 
+              *ngIf="message.image_url" 
+              [src]="message.image_url" 
+              class="message-image">
+            </ion-img>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
   </ion-list>
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
-    <ion-input [(ngModel)]="newMessage" placeholder="Type a message"></ion-input>
-    <ion-button (click)="sendMessage()">Send</ion-button>
-    <ion-button (click)="takePhoto()">Add Image</ion-button>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start" class="ion-margin-start">
+      <ion-button (click)="takePhoto()">
+        <ion-icon name="image-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-input 
+      [(ngModel)]="newMessage" 
+      placeholder="Type a message"
+      class="message-input">
+    </ion-input>
+    
+    <ion-buttons slot="end" class="ion-margin-end">
+      <ion-button 
+        (click)="sendMessage()" 
+        [disabled]="!newMessage.trim()"
+        color="primary">
+        <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-footer>

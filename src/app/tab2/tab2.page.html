@@ -1,24 +1,66 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon name="chatbubbles-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Chatrooms</ion-title>
-    <ion-button (click)="createChatroom()">New Chatroom</ion-button>
+    <ion-buttons slot="end">
+      <ion-button (click)="createChatroom()" fill="outline" color="light" shape="round">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let room of chatrooms" (click)="openChatroom(room.id)">
-      <ion-label>{{ room.name }}</ion-label>
-      <ion-buttons slot="end">
-        <ion-button (click)="presentActionSheet($event, room); $event.stopPropagation()">
-          <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
+  <ion-refresher slot="fixed" (ionRefresh)="loadChatrooms()">
+    <ion-refresher-content 
+      pullingIcon="chevron-down-circle-outline"
+      refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list lines="full">
+    <ion-item-sliding *ngFor="let room of chatrooms">
+      <ion-item (click)="openChatroom(room.id)" detail="true">
+        <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h2>{{ room.name }}</h2>
+          <p>{{ room.description || 'No description' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-button (click)="presentActionSheet($event, room); $event.stopPropagation()">
+            <ion-icon name="ellipsis-vertical" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+      
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editChatroom(room)">
+          <ion-icon name="create-outline"></ion-icon>
+          Edit
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteChatroom(room)">
+          <ion-icon name="trash-outline"></ion-icon>
+          Delete
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
+
+  <div *ngIf="chatrooms.length === 0" class="ion-padding ion-text-center">
+    <ion-icon name="chatbubbles-outline" class="empty-state-icon"></ion-icon>
+    <h2>No Chatrooms Yet</h2>
+    <p>Create your first chatroom and start connecting!</p>
+    <ion-button expand="block" (click)="createChatroom()" color="primary">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Create Chatroom
+    </ion-button>
+  </div>
 </ion-content>
 
-<!-- Action Sheet for editing/deleting a chatroom -->
 <ion-action-sheet
   [isOpen]="isActionSheetOpen"
   [header]="selectedRoom?.name"

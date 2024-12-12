@@ -1,18 +1,41 @@
 import { Injectable } from '@angular/core';
 import { supabase } from './supabase.service';
 import { SupabaseMembersService } from './supabase-members.service';
-
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseChatroomsService {
+  private chatroomsSubject = new BehaviorSubject<any[]>([]);
+  public chatrooms$ = this.chatroomsSubject.asObservable();
+  private subscription: any = null;
 
   constructor(
     private memberService: SupabaseMembersService
   ) {}
 
-  async getChatrooms() {
+  async initializeChatrooms() {
+    // Load initial chatrooms
+    await this.getChatrooms();
 
+    // Set up real-time subscription for chatrooms
+    this.subscription = supabase
+      .channel('public:chatroom')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'chatroom' },
+        (payload) => {
+          console.log(payload)          
+          const newMessage = payload.new;
+          // Append the new message to the current list
+          const currentMessages = this.chatroomsSubject.getValue();
+          this.chatroomsSubject.next([...currentMessages, newMessage]);
+        }
+      ) 
+      .subscribe();
+  }
+
+  async getChatrooms() {
     // Get the current user
     const { data: user, error: userError } = await supabase.auth.getUser();
 
@@ -29,7 +52,7 @@ export class SupabaseChatroomsService {
       // Fetch chatrooms where the user is a member
       const { data: chatrooms, error: chatroomsError } = await supabase
       .from('members')
-      .select('chatroom:chatroom_id(name, id, creator_user_id)')
+      .select('chatroom:chatroom_id(name, description, id, creator_user_id)')
       .eq('user_id', userId);
 
       if (chatroomsError) {
@@ -41,7 +64,7 @@ export class SupabaseChatroomsService {
     return chatrooms.map((member) => member.chatroom);
   }
 
-async createChatroom(name: string) {
+async createChatroom(name: string, description: string) {
   // Get the current user
   const { data: user, error: userError } = await supabase.auth.getUser();
 
@@ -59,7 +82,7 @@ async createChatroom(name: string) {
   // Insert the chatroom with the creator_user_id
   const { data: chatroom, error } = await supabase
     .from('chatroom')
-    .insert([{ name, creator_user_id: creatorUserId }])
+    .insert([{ name, description, creator_user_id: creatorUserId }])
     .select('id')
     .single();
 
@@ -109,6 +132,11 @@ async updateChatroomName(chatroomId: string, newName: string) {
   if (error) {
     console.error('Error updating chatroom:', error);
     throw error;
+  }
+}
+unsubscribe() {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
   }
 }
 }

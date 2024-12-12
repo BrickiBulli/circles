@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Chatroom</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="edit-chatroom-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Edit Chatroom Details</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Chatroom Name</ion-label>
+          <ion-input 
+            [(ngModel)]="chatroomName" 
+            [clearInput]="true"
+            placeholder="Enter chatroom name"
+            maxlength="50"
+            #chatNameField="ngModel"
+            >
+          </ion-input>
+          <ion-text color="danger" class="error-message" *ngIf="chatNameField.invalid && chatNameField.touched">
+            <p *ngIf="chatNameField.errors?.['required']">Email is required.</p>
+            <p *ngIf="chatNameField.errors?.['maxlength']">Maxlength is 50 characters.</p>
+          </ion-text>
+        </ion-item>
+        
+        <div class="ion-margin-top">
+          <ion-button 
+            expand="block" 
+            (click)="updateChatroom()" 
+            [disabled]="!chatroomName.trim()"
+            color="primary">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Save Changes
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="ion-margin-top">
+      <ion-card-header>
+        <ion-card-title>Members</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let member of members">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label>{{ member.user_name }}</ion-label>
+          </ion-item>
+        </ion-list>
+        
+        <ion-button 
+          expand="block" 
+          (click)="goToAddUsers()"
+          color="secondary">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          Edit Users
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

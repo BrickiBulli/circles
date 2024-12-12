@@ -1,0 +1,25 @@
+.middle-top-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    padding-top: 10%; /* Adjust this value to control vertical positioning */
+  }
+
+  form {
+    width: 100%;
+    max-width: 400px;
+  }
+  .error-message {
+    font-size: 0.9rem; /* Slightly smaller text for error messages */
+    margin-top: 4px; /* Adds some space above the message */
+    margin-left: 0px; /* Aligns it with input field content */
+    line-height: 1.4; /* Better spacing for readability */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .error-message p {
+    margin: 0; /* Removes default paragraph margin */
+  }

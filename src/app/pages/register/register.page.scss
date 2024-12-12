@@ -1,11 +1,26 @@
-ion-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  
-  form {
-    width: 100%;
-    max-width: 400px;
-  }
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  padding-top: 5%; /* Adjust this value to control vertical positioning */
+}
+
+form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.error-message {
+  font-size: 0.9rem; 
+  margin-top: 4px; 
+  margin-left: 0px; 
+  line-height: 1.4; 
+  display: flex;
+  flex-direction: column;
+}
+
+.error-message p {
+  margin: 0; 
+}

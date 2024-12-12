@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { supabase } from './supabase.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })

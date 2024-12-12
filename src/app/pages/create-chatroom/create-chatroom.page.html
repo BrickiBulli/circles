@@ -1,16 +1,52 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Create Chatroom</ion-title>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
     </ion-buttons>
+    <ion-title>Create Chatroom</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-item>
-    <ion-label position="floating">Chatroom Name</ion-label>
-    <ion-input [(ngModel)]="chatroomName"></ion-input>
-  </ion-item>
-  <ion-button expand="block" (click)="createChatroom()">Create Chatroom</ion-button>
+<ion-content class="ion-padding">
+  <div class="create-chatroom-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>New Chatroom</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Chatroom Name</ion-label>
+          <ion-input 
+            [(ngModel)]="chatroomName" 
+            [clearInput]="true"
+            placeholder="Enter chatroom name"
+            maxlength="50">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Description (Optional)</ion-label>
+          <ion-textarea 
+            [(ngModel)]="chatroomDescription" 
+            placeholder="Add a brief description"
+            maxlength="200">
+          </ion-textarea>
+        </ion-item>
+        
+        <div class="ion-margin-top">
+          <ion-button 
+            expand="block" 
+            (click)="createChatroom()" 
+            [disabled]="!chatroomName.trim()"
+            color="primary">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Create Chatroom
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

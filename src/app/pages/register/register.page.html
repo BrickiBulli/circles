@@ -1,45 +1,78 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Register</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">Register</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form >
-    <ion-item>
-      <ion-label position="stacked">Username</ion-label>
-      <ion-input
-        [(ngModel)]="username"
-        name="username"
-        required
-      ></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Email</ion-label>
-      <ion-input
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-      ></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Password</ion-label>
-      <ion-input
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-      ></ion-input>
-    </ion-item>
-
-    <ion-button
-      expand="block"
-      (click)="register()"
-    >
-      Register
-    </ion-button>
-  </form >
+  <div class="center-container">
+    <form #registerForm="ngForm">
+      <ion-list lines="full">
+        <!-- Username Field -->
+        <ion-item>
+          <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Username</ion-label>
+          <ion-input
+            [(ngModel)]="username"
+            name="username"
+            required
+            minlength="4"
+            #usernameField="ngModel"
+          ></ion-input>
+          <ion-text color="danger" class="error-message" *ngIf="usernameField.invalid && usernameField.touched">
+            <p *ngIf="usernameField.errors?.['required']">Username is required.</p>
+            <p *ngIf="usernameField.errors?.['minlength']">Username must be longer than 3 characters.</p>
+          </ion-text>  
+        </ion-item>
+  
+        <!-- Email Field -->
+        <ion-item>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            email
+            #emailField="ngModel"
+          ></ion-input>
+          <ion-text color="danger" class="error-message" *ngIf="emailField.invalid && emailField.touched">
+            <p *ngIf="emailField.errors?.['required']">Email is required.</p>
+            <p *ngIf="emailField.errors?.['email']">Please enter a valid email address.</p>
+          </ion-text>
+        </ion-item>      
+    
+        <!-- Password Field -->
+        <ion-item>
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            minlength="7"
+            #passwordField="ngModel"
+          ></ion-input>
+          <ion-text color="danger" class="error-message" *ngIf="passwordField.invalid && passwordField.touched">
+            <p *ngIf="passwordField.errors?.['required']">Password is required.</p>
+            <p *ngIf="passwordField.errors?.['minlength']">Password must be longer than 6 characters.</p>
+          </ion-text>
+        </ion-item>
+        
+      </ion-list>
+    
+      <div class="ion-padding">
+        <ion-button expand="block" color="primary" [disabled]="registerForm.invalid" (click)="register()">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          Register
+        </ion-button>
+        <ion-button expand="block" color="medium" fill="outline" (click)="goToLogin()">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Go to Login
+        </ion-button>
+      </div>
+    </form>
+  </div>
 </ion-content>

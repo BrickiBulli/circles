@@ -45,7 +45,7 @@ export const routes: Routes = [
   },
   {
     path: 'edit-chatroom/:id',
-    loadComponent: () => import('./edit-chatroom/edit-chatroom.page').then( m => m.EditChatroomPage),
+    loadComponent: () => import('./pages/edit-chatroom/edit-chatroom.page').then( m => m.EditChatroomPage),
     canActivate: [AuthGuard],
   },
 

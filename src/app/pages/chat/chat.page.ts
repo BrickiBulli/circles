@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonThumbnail, IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal, IonImg, IonIcon } from '@ionic/angular/standalone';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonThumbnail, IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal, IonImg, IonIcon, IonCardSubtitle, IonBackButton } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
 import { supabase } from 'src/app/services/supabase.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { environment } from 'src/environments/environment';
+import { addIcons } from 'ionicons';
+import { chatbubbleOutline, imageOutline, openOutline, sendOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
   standalone: true,
-  imports: [IonCard, IonCardHeader, IonCardTitle, IonCardContent , IonThumbnail , IonIcon, IonImg, IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
+  imports: [IonBackButton, IonCardSubtitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent , IonThumbnail , IonIcon, IonImg, IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
 })
 export class ChatPage implements OnInit {
   chatroomId!: string;
@@ -25,7 +27,9 @@ export class ChatPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private chatService: ChatService
-  ) {}
+  ) {
+    addIcons({chatbubbleOutline,openOutline,imageOutline,sendOutline});
+  }
 
   async ngOnInit() {
     this.chatroomId = this.route.snapshot.paramMap.get('id')!;

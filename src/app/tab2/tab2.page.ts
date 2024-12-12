@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import {IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList, IonActionSheet, IonIcon} from '@ionic/angular/standalone';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ToastController, IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList, IonActionSheet, IonIcon, IonItemOption, IonItemOptions, IonItemSliding, IonRefresherContent, IonRefresher } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { SupabaseChatroomsService } from '../services/supabase-chatrooms.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActionSheetButton } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { ellipsisVertical, create, trash, close, exit } from 'ionicons/icons';
+import { ellipsisVertical, create, trash, close, exit, chatbubblesOutline, addOutline, chatboxEllipsesOutline, createOutline, trashOutline } from 'ionicons/icons';
 import { supabase } from '../services/supabase.service';
 import { SupabaseMembersService } from '../services/supabase-members.service';
 @Component({
@@ -14,9 +14,10 @@ import { SupabaseMembersService } from '../services/supabase-members.service';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [CommonModule, ExploreContainerComponent, IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonActionSheet, IonHeader, IonList, IonIcon],
+  imports: [IonRefresher, IonRefresherContent, IonItemSliding, IonItemOptions, IonItemOption, CommonModule, ExploreContainerComponent, IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonActionSheet, IonHeader, IonList, IonIcon],
 })
-export class Tab2Page {
+export class Tab2Page implements OnInit, OnDestroy {
+  private subscription: any;
   chatrooms: any[] = [];
   isActionSheetOpen = false;
   selectedRoom: any = null;
@@ -25,7 +26,6 @@ export class Tab2Page {
   get actionSheetButtons(): ActionSheetButton[] {
     const isOwner = this.selectedRoom && this.selectedRoom.creator_user_id === this.currentUserId;
 
-    // Base buttons that everyone gets (e.g., Cancel)
     const buttons: ActionSheetButton[] = [
       {
         text: 'Cancel',
@@ -34,7 +34,6 @@ export class Tab2Page {
       }
     ];
 
-    // If user is owner, add Edit and Delete buttons
     if (isOwner) {
       buttons.unshift(
         {
@@ -66,17 +65,25 @@ export class Tab2Page {
 
     return buttons;
   }
+
   constructor(
     private chatroomsService: SupabaseChatroomsService,
     private router: Router,
     private memberService: SupabaseMembersService,
+    private toastController: ToastController,
+
   ) {
     addIcons({
+      chatbubblesOutline,
+      addOutline,
+      chatboxEllipsesOutline,
       ellipsisVertical,
+      createOutline,
+      trashOutline,
       create,
       trash,
       close,
-      exit
+      exit,
     });
   }
 
@@ -88,7 +95,18 @@ export class Tab2Page {
       this.currentUserId = authUser?.user.id;
     }
 
-    this.loadChatrooms();
+    this.chatroomsService.initializeChatrooms();
+
+    this.subscription = this.chatroomsService.chatrooms$.subscribe((chatrooms) => {
+      this.chatrooms = chatrooms;
+      console.log(chatrooms)
+    });
+  }
+
+  // Refresh chatrooms data whenever the page is about to enter
+  async ionViewWillEnter() {
+    console.log("wfasdasd")
+    await this.loadChatrooms();
   }
 
   async loadChatrooms() {
@@ -98,9 +116,12 @@ export class Tab2Page {
       console.error('Failed to load chatrooms:', error);
     }
   }
-  createChatroom(){
+
+  async createChatroom() {
     this.router.navigate(['/create-chatroom']);
+    await this.loadChatrooms();
   }
+
   openChatroom(id: string) {
     this.router.navigate(['/chat', id]);
   }
@@ -109,8 +130,13 @@ export class Tab2Page {
     this.router.navigate(['/edit-chatroom', room.id]);
   }
 
-  deleteChatroom(room: any) {
-    this.chatroomsService.deleteChatroom(room.id)
+  async deleteChatroom(room: any) {
+    try {
+      await this.chatroomsService.deleteChatroom(room.id);
+      await this.loadChatrooms();
+    } catch (error) {
+      console.error('Failed to delete chatroom:', error);
+    }
   }
 
   presentActionSheet(event: Event, room: any) {
@@ -124,15 +150,30 @@ export class Tab2Page {
       console.error('No current user ID found, cannot leave chatroom.');
       return;
     }
-  
+
     try {
       await this.memberService.removeMemberFromChat(room.id, this.currentUserId);
-      // Optionally reload chatrooms or update UI after leaving
       await this.loadChatrooms();
-      alert('You have left the chatroom');
+      this.presentToast('You have left the chatroom', 'success');
     } catch (error) {
       console.error('Error leaving chatroom:', error);
-      alert('Failed to leave chatroom, please try again later.');
+      this.presentToast('Failed to leave chatroom, please try again later.', 'danger');
     }
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
+  ngOnDestroy() {
+    // Clean up the subscription
+    this.subscription.unsubscribe();
+    this.chatroomsService.unsubscribe();
   }
 }

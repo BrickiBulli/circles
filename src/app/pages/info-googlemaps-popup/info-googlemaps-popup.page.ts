@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonSelect, IonSelectOption, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonLabel, IonNote, IonButton, IonButtons, IonImg, IonIcon } from '@ionic/angular/standalone';
+import { ToastController, IonContent, IonSelect, IonSelectOption, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonLabel, IonNote, IonButton, IonButtons, IonImg, IonIcon } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular';
 import { environment } from 'src/environments/environment'; 
 import { addIcons } from 'ionicons';
@@ -9,6 +9,7 @@ import { star, starHalf, starOutline } from 'ionicons/icons';
 import { supabase } from 'src/app/services/supabase.service';
 import { SupabaseChatroomsService } from 'src/app/services/supabase-chatrooms.service';
 import { ChatService } from 'src/app/services/chat.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-info-googlemaps-popup',
   templateUrl: './info-googlemaps-popup.page.html',
@@ -29,7 +30,9 @@ export class InfoGooglemapsPopupPage {
   constructor(
     private modalController: ModalController,
     private chatroomsService: SupabaseChatroomsService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private toastController: ToastController,
+    private router: Router
   ) {
     addIcons({
       star,
@@ -81,11 +84,12 @@ export class InfoGooglemapsPopupPage {
           this.selectedChatroomId,
           this.place
         );
-        alert('Proposal sent to chat!');
+        this.presentToast('Proposal sent to chat!', 'success');
         this.dismiss();
+        this.router.navigate(['/chat', this.selectedChatroomId])
       } catch (error) {
         console.error('Error sending proposal:', error);
-        alert('Failed to send proposal.');
+        this.presentToast('Failed to send proposal.', 'danger');
       }
     }
 
@@ -95,5 +99,15 @@ export class InfoGooglemapsPopupPage {
     } catch (error) {
       console.error('Error loading chatrooms:', error);
     }
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000, 
+      color,
+      position: 'top',
+    });
+    await toast.present();
   }
 }
