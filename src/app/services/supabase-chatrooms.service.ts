@@ -29,7 +29,7 @@ export class SupabaseChatroomsService {
       // Fetch chatrooms where the user is a member
       const { data: chatrooms, error: chatroomsError } = await supabase
       .from('members')
-      .select('chatroom:chatroom_id(name, id)')
+      .select('chatroom:chatroom_id(name, id, creator_user_id)')
       .eq('user_id', userId);
 
       if (chatroomsError) {
@@ -73,4 +73,42 @@ async createChatroom(name: string) {
   return chatroom;
 }
 
+async deleteChatroom(chatroomId: string) {
+  const { error } = await supabase
+    .from('chatroom')
+    .delete()
+    .eq('id', chatroomId);
+
+  if (error) {
+    console.error('Error deleting chatroom:', error);
+    throw error;
+  }
+}
+
+async getChatroomDetails(chatroomId: string) {
+  const { data, error } = await supabase
+    .from('chatroom')
+    .select('name')
+    .eq('id', chatroomId)
+    .single();
+
+  if (error) {
+    console.error('Error loading chatroom:', error);
+    throw error;
+  }
+
+  return data; // { name: string }
+}
+
+async updateChatroomName(chatroomId: string, newName: string) {
+  const { error } = await supabase
+    .from('chatroom')
+    .update({ name: newName })
+    .eq('id', chatroomId);
+
+  if (error) {
+    console.error('Error updating chatroom:', error);
+    throw error;
+  }
+}
 }

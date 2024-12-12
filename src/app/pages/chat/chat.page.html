@@ -7,7 +7,12 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let message of messages">
-      <ion-label>{{ message.text }}</ion-label>
+      <ion-label>
+        <!-- Display text if present -->
+        <div *ngIf="message.text">{{ message.text }}</div>
+        <!-- Display image if present -->
+        <ion-img *ngIf="message.image_url" [src]="message.image_url"></ion-img>
+      </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>
@@ -16,5 +21,6 @@
   <ion-toolbar>
     <ion-input [(ngModel)]="newMessage" placeholder="Type a message"></ion-input>
     <ion-button (click)="sendMessage()">Send</ion-button>
+    <ion-button (click)="takePhoto()">Add Image</ion-button>
   </ion-toolbar>
 </ion-footer>

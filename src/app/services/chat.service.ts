@@ -77,13 +77,16 @@ export class ChatService {
       .subscribe();
   }
 
-  // Send a new message
-  async sendMessage(chatroomId: string, user: string, text: string) {
-    console.log('sendmessage')
+  async sendMessage(chatroomId: string, userId: string, text: string, imageUrl?: string) {
     const { error } = await supabase
       .from('messages')
-      .insert([{ chatroom_id: chatroomId, user, text }]);
-
+      .insert([{
+        chatroom_id: chatroomId,
+        user_id: userId,
+        text: text || null,
+        image_url: imageUrl || null
+      }]);
+  
     if (error) {
       console.error('Error sending message:', error);
       throw error;

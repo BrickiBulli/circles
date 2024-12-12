@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal, IonImg } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
 import { supabase } from 'src/app/services/supabase.service';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
   standalone: true,
-  imports: [IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
+  imports: [IonImg, IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
 })
 export class ChatPage implements OnInit {
   chatroomId!: string;
@@ -61,4 +62,52 @@ export class ChatPage implements OnInit {
     }
     this.chatService.cleanup();
   }
+
+  async takePhoto() {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
+  
+    if (image && image.base64String) {
+      // Convert the base64 string to a Blob for uploading
+      const blob = this.base64ToBlob(image.base64String, `image/${image.format}`);
+      
+      // Upload the blob to Supabase Storage
+      const imageUrl = await this.uploadImage(blob);
+      
+      // Send the image URL as a message
+      await this.chatService.sendMessage(this.chatroomId, this.userId, '', imageUrl);
+    }
+  }
+  
+  base64ToBlob(base64: string, type: string) {
+    const byteCharacters = atob(base64);
+    const byteNumbers = Array.from(byteCharacters, c => c.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type });
+  }
+  
+  async uploadImage(file: Blob): Promise<string> {
+    const fileName = `images/${Date.now()}.jpg`; // or use another unique naming strategy
+    const { data, error } = await supabase.storage.from('chat-images').upload(fileName, file, {
+      contentType: 'image/jpeg'
+    });
+  
+    if (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+
+
+    // Generate a public URL (make sure your bucket is public or use signed URLs)
+    const urlData: {data:{
+      publicUrl: string
+    }} = supabase.storage.from('chat-images').getPublicUrl(fileName);
+    console.log(urlData.data.publicUrl)
+    return  urlData.data.publicUrl || '';
+  }
+  
+   
 }
