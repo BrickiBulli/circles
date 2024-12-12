@@ -10,6 +10,12 @@
       <ion-label>
         <!-- Display text if present -->
         <div *ngIf="message.text">{{ message.text }}</div>
+        <!-- Display proposal details if present -->
+        <div *ngIf="message.proposal">
+          <p>{{ message.proposal.place_address }}</p>
+          <ion-img *ngIf="message.proposal.place_photo_url" [src]="getPhotoUrl(message.proposal.place_photo_url)" alt="{{ message.proposal.place_name }}"></ion-img>
+          <ion-button *ngIf="message.proposal.place_website" fill="outline" [href]="message.proposal.place_website" target="_blank">Visit Website</ion-button>
+        </div>
         <!-- Display image if present -->
         <ion-img *ngIf="message.image_url" [src]="message.image_url"></ion-img>
       </ion-label>

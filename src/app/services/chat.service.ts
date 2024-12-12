@@ -46,7 +46,7 @@ export class ChatService {
     // Load initial messages
     const { data: initialMessages, error } = await supabase
       .from('messages')
-      .select('*')
+      .select('*, proposal(*)')
       .eq('chatroom_id', chatroomId)
       .order('created_at', { ascending: true });
 
@@ -97,6 +97,40 @@ export class ChatService {
     if (this.subscription) {
       supabase.removeChannel(this.subscription);
       this.subscription = null;
+    }
+  }
+
+  async createProposalMessage(chatroomId: string, place: any): Promise<void> {
+    try {
+      // Step 1: Create the proposal entry
+      const { data: proposal, error: proposalError } = await supabase.from('proposal').insert({
+        place_name: place.name,
+        place_address: place.formatted_address,
+        place_photo_url: place.photos?.[0] ? place.photos[0].photo_reference : null,
+        place_website: place.website || null
+      }).select().single();
+  
+      if (proposalError) {
+        console.error('Error creating proposal:', proposalError);
+        throw proposalError;
+      }
+      
+      console.log(proposal.id)
+      // Step 2: Create the message referencing the proposal
+      const { error: messageError } = await supabase.from('messages').insert({
+        chatroom_id: chatroomId,
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        text: proposal.place_name, // Use the place name as the message text
+        proposal_id: proposal.id
+      });
+  
+      if (messageError) {
+        console.error('Error creating message:', messageError);
+        throw messageError;
+      }
+    } catch (err) {
+      console.error('Error creating proposal message:', err);
+      throw err;
     }
   }
 }

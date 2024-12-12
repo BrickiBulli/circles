@@ -1,18 +1,20 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonLabel, IonNote, IonButton, IonButtons, IonImg, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonSelect, IonSelectOption, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonLabel, IonNote, IonButton, IonButtons, IonImg, IonIcon } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular';
 import { environment } from 'src/environments/environment'; 
 import { addIcons } from 'ionicons';
 import { star, starHalf, starOutline } from 'ionicons/icons';
-
+import { supabase } from 'src/app/services/supabase.service';
+import { SupabaseChatroomsService } from 'src/app/services/supabase-chatrooms.service';
+import { ChatService } from 'src/app/services/chat.service';
 @Component({
   selector: 'app-info-googlemaps-popup',
   templateUrl: './info-googlemaps-popup.page.html',
   styleUrls: ['./info-googlemaps-popup.page.scss'],
   standalone: true,
-  imports: [IonImg, IonButtons, IonButton, IonNote, IonLabel, IonItem, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonIcon]
+  imports: [IonImg, IonButtons, IonButton, IonNote, IonLabel, IonItem, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonIcon, IonSelect, IonSelectOption]
 })
 export class InfoGooglemapsPopupPage {
 
@@ -21,9 +23,13 @@ export class InfoGooglemapsPopupPage {
   fullStars: number[] = [];
   emptyStars: number[] = [];
   hasHalfStar: boolean = false;
-
+  chatrooms: any[] = []; 
+  selectedChatroomId: string | null = null;
+  currentUserId: string | null = null;
   constructor(
     private modalController: ModalController,
+    private chatroomsService: SupabaseChatroomsService,
+    private chatService: ChatService
   ) {
     addIcons({
       star,
@@ -32,7 +38,17 @@ export class InfoGooglemapsPopupPage {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
+    const { data: authUser, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error('Error getting current user:', error);
+    } else {
+      this.currentUserId = authUser?.user.id;
+    }
+
+    await this.loadUserChatrooms();
+
     if (this.place?.rating) {
       const rating = this.place.rating;
       const fullStarCount = Math.floor(rating);
@@ -52,5 +68,32 @@ export class InfoGooglemapsPopupPage {
   getPhotoUrl(photoReference: string): string {
     const apiKey = environment.googleApiKey; 
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+  }
+
+  async sendToChat() {
+      if (!this.selectedChatroomId) {
+        alert('Please select a chatroom');
+        return;
+      }
+  
+      try {
+        await this.chatService.createProposalMessage(
+          this.selectedChatroomId,
+          this.place
+        );
+        alert('Proposal sent to chat!');
+        this.dismiss();
+      } catch (error) {
+        console.error('Error sending proposal:', error);
+        alert('Failed to send proposal.');
+      }
+    }
+
+  async loadUserChatrooms() {
+    try {
+      this.chatrooms = await this.chatroomsService.getChatrooms();
+    } catch (error) {
+      console.error('Error loading chatrooms:', error);
+    }
   }
 }

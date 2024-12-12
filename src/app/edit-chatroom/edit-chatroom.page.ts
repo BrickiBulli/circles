@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { supabase } from 'src/app/services/supabase.service';
 import { SupabaseMembersService } from 'src/app/services/supabase-members.service';
-import {  IonModal, IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList, IonActionSheet, IonIcon, IonCardTitle, IonCardHeader, IonCard, IonCardContent, IonBackButton } from '@ionic/angular/standalone';
+import { IonInput, IonButton, IonLabel, IonItem, IonContent, IonButtons, IonTitle, IonToolbar, IonHeader, IonList, IonActionSheet, IonIcon, IonCardTitle, IonCardHeader, IonCard, IonCardContent, IonBackButton } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseChatroomsService } from 'src/app/services/supabase-chatrooms.service';

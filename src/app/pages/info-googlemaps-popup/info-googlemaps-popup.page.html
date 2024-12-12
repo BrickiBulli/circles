@@ -43,7 +43,23 @@
       <ion-item *ngIf="place.website">
         <ion-label>More Info</ion-label>
         <ion-button fill="outline" slot="end" [href]="place.website" target="_blank">Visit Website</ion-button>
+      </ion-item>      
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Send to Chat</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Select Chatroom</ion-label>
+        <ion-select [(ngModel)]="selectedChatroomId">
+          <ion-select-option *ngFor="let chatroom of chatrooms" [value]="chatroom.id">
+            {{ chatroom.name }}
+          </ion-select-option>
+        </ion-select>
       </ion-item>
+      <ion-button expand="block" [disabled]="!selectedChatroomId" (click)="sendToChat()">Send</ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>

@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal, IonImg } from '@ionic/angular/standalone';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonThumbnail, IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonFooter, IonButton, IonInput, IonButtons, IonModal, IonImg, IonIcon } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
 import { supabase } from 'src/app/services/supabase.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
   standalone: true,
-  imports: [IonImg, IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
+  imports: [IonCard, IonCardHeader, IonCardTitle, IonCardContent , IonThumbnail , IonIcon, IonImg, IonModal, IonButtons, IonButton, IonFooter, IonLabel, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, FormsModule]
 })
 export class ChatPage implements OnInit {
   chatroomId!: string;
@@ -40,7 +40,9 @@ export class ChatPage implements OnInit {
     // Subscribe to the messages observable from the service
     this.sub = this.chatService.messages$.subscribe((messages) => {
       this.messages = messages;
+      console.log(messages)
     });
+    this.loadChatroomDetails();
   }
 
   async loadChatroomDetails() {
@@ -109,5 +111,9 @@ export class ChatPage implements OnInit {
     return  urlData.data.publicUrl || '';
   }
   
+  getPhotoUrl(photoReference: string): string {
+    const apiKey = environment.googleApiKey; 
+    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+  }
    
 }
