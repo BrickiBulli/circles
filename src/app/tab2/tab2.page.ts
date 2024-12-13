@@ -9,6 +9,8 @@ import { addIcons } from 'ionicons';
 import { ellipsisVertical, create, trash, close, exit, chatbubblesOutline, addOutline, chatboxEllipsesOutline, createOutline, trashOutline } from 'ionicons/icons';
 import { supabase } from '../services/supabase.service';
 import { SupabaseMembersService } from '../services/supabase-members.service';
+import { Preferences } from '@capacitor/preferences';
+
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -88,6 +90,8 @@ export class Tab2Page implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    const isDarkMode = await this.getData();
+    document.documentElement.classList.toggle('ion-palette-dark',  isDarkMode);
     const { data: authUser, error } = await supabase.auth.getUser();
     if (error) {
       console.error('Error getting current user:', error);
@@ -175,5 +179,12 @@ export class Tab2Page implements OnInit, OnDestroy {
     // Clean up the subscription
     this.subscription.unsubscribe();
     this.chatroomsService.unsubscribe();
+  }
+  async getData(): Promise<boolean> {
+    const { value } = await Preferences.get({ key: 'dark_mode' });
+    console.log('Retrieved value:', value);
+
+    // Parse the value into a boolean
+    return value === 'true';
   }
 }

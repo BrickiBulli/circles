@@ -1,5 +1,36 @@
 {
   "appId": "ionic.circles",
-  "appName": "circles",
-  "webDir": "www"
+  "appName": "Circles",
+  "webDir": "www",
+  "plugins": {     
+    "SplashScreen": {       
+      "launchShowDuration": 2000,       
+      "launchAutoHide": true,       
+      "backgroundColor": "#3880ff",      
+      "androidSplashResourceName": "splash",       
+      "androidScaleType": "CENTER_CROP",       
+      "showSpinner": true,       
+      "androidSpinnerStyle": "large",       
+      "spinnerColor": "#ffffff",       
+      "splashFullScreen": true,      
+      "splashImmersive": true },     
+    "GoogleMaps": {       
+      "android": {         
+        "apiKey": "AIzaSyAueg19mjIROXOCzJqs-K4MrQmBYUD0rzw"       }     
+      },     
+    "Geolocation": {       
+      "permissions": [         
+        "location",         
+        "coarseLocation" ]    
+      }   
+    },   
+    "server": {     
+      "cleartext": true,     
+      "allowNavigation": [       
+        "*.google.com",       
+        "*.googleapis.com"]   
+      
+    }
 }
+  
+

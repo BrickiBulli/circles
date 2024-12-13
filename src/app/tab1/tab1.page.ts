@@ -7,6 +7,7 @@ import { GeolocationService } from '../services/geolocation.service';
 import { GooglePlacesService } from '../services/google-places.service'; 
 import { InfoGooglemapsPopupPage } from '../pages/info-googlemaps-popup/info-googlemaps-popup.page';  
 import { ModalController } from '@ionic/angular';
+import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-tab1',
@@ -29,6 +30,9 @@ export class Tab1Page {
   ){}
 
   async ngOnInit() {
+    const isDarkMode = await this.getData();
+    document.documentElement.classList.toggle('ion-palette-dark',  isDarkMode);
+    
     const apiKey = this.googleMapsService.getApiKey();
     if (!apiKey) {
       console.error('Google Maps API key not found');
@@ -125,5 +129,12 @@ export class Tab1Page {
       }
       this.markers = []; // Clear the markers array
     }
+  }
+  async getData(): Promise<boolean> {
+    const { value } = await Preferences.get({ key: 'dark_mode' });
+    console.log('Retrieved value:', value);
+
+    // Parse the value into a boolean
+    return value === 'true';
   }
 }

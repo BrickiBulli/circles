@@ -3,6 +3,10 @@
     width: 100%;
   }
 
-ion-content{
-  --background: none;
-}
+  ion-content {
+    --background: transparent;
+  }
+  
+  body {
+    background: transparent;
+  }
